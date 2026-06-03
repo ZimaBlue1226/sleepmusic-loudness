@@ -1,0 +1,7 @@
+interface:
+  display_name: "Sleep Music Loudness"
+  short_description: "Tune VelaSleep sleep music loudness."
+  default_prompt: "Use $sleepmusic-loudness to measure and create a quiet sleep-music loudness test version."
+
+policy:
+  allow_implicit_invocation: true
