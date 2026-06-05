@@ -81,6 +81,13 @@ def strip_timestamp(stem: str):
     return re.sub(r"-\d{12}$", "", stem)
 
 
+def format_duration(seconds: float):
+    total = int(round(seconds))
+    minutes = total // 60
+    secs = total % 60
+    return f"{minutes}:{secs:02d}"
+
+
 def render(path: Path, i: float, tp: float, lra: float, sample_rate: int, output: Path | None, timestamp: str | None, overwrite: bool):
     ffmpeg = find_exe("ffmpeg.exe")
     out = output or output_name(path, timestamp)
@@ -120,17 +127,19 @@ def print_report(path: Path, info, loud, target: str):
     print(f"predicted_output_lra: {loud.get('output_lra')} LU")
     print(f"target_offset: {loud.get('target_offset')} LU")
     print()
-    print("表格检查信息")
+    print("检查信息")
+    print("```text")
     print(f"实测文件：{path.name}")
     print(f"响度优化目标：{target}")
-    print(f"综合响度 Integrated LUFS：{loud['input_i']} LUFS")
-    print(f"True Peak dBTP：{loud['input_tp']} dBTP")
-    print(f"LRA 动态范围：{loud['input_lra']} LU")
+    print(f"综合响度：{loud['input_i']} LUFS")
+    print(f"True Peak：{loud['input_tp']} dBTP")
+    print(f"LRA：{loud['input_lra']} LU")
     print(f"响度门限：{loud['input_thresh']} LUFS")
     print(f"采样率：{stream.get('sample_rate')} Hz")
     print(f"声道：{channel_text}")
     print(f"位深：{bits}-bit PCM" if bits else "位深：")
-    print(f"时长：{duration / 60:.2f} min")
+    print(f"时长：{format_duration(duration)}")
+    print("```")
 
 
 def main():

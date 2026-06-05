@@ -29,16 +29,25 @@ If the user says it still feels loud or too present, try `I=-22` or `I=-23` befo
    - `input_tp`: true peak in dBTP.
    - `input_lra`: loudness range in LU.
    - duration, format, sample rate, channels, bit depth when relevant.
-5. Judge for sleep use:
-   - Below about `-35 LUFS`: usually too quiet for a finished sleep-bed file.
-   - Around `-22` to `-20 LUFS`: useful audition range for VelaSleep sleep beds.
-   - `-16 LUFS`: usually too loud / too present for this product context.
-   - `TP` near `0 dBTP`: risky for later AAC/MP3 encoding; prefer `-2.0 dBTP`.
-   - `LRA` above about `15 LU`: may feel dynamically active or uneven for sleep.
-6. Generate audition files only after the user asks.
+5. Judge risk before rendering:
+   - Low risk: complete full-mix sleepmusic, integrated loudness below about `-35 LUFS`, true peak below about `-10 dBTP`, and LRA roughly `6-14 LU`. If the user explicitly asked to process/optimize, continue automatically.
+   - Medium risk: integrated loudness already near target (`-25` to `-20 LUFS`), LRA above `15 LU`, true peak above `-4 dBTP`, long quiet intro/outro, or unclear whether dynamic loudnorm is appropriate. Stop after measurement, explain the risk, propose the processing mode, and wait for user confirmation.
+   - High risk: file appears to be a stem/effect/rain/bird/loop file, integrated loudness below about `-50 LUFS`, LRA below about `2 LU`, suspected missing tracks, or user goal is ambiguous. Stop after measurement and wait for user confirmation. Do not auto-render.
+6. Choose processing mode:
+   - Use dynamic `loudnorm` for clearly quiet full-mix sleepmusic.
+   - Use linear gain (`volume=XdB`) when the file is already close to target and only needs a small overall lift.
+   - Do not default to finished-track loudnorm for stems or sound effects.
 7. Preserve source files. Write new files using `Music Title-YYYYMMDDHHMM.wav`.
 8. Explicitly preserve `44100 Hz` output with `-ar 44100` unless the user asks otherwise.
-9. After every measure or render task, finish with a table-ready "检查信息" block for the user.
+9. After every measure or render task, finish with a code-block "检查信息" block in the exact field format below.
+
+## Risk Examples
+
+`Rain on Petals.wav` around `-38.60 LUFS / -22.12 dBTP / LRA 10.60` is low risk: complete mix, clearly quiet, dynamic loudnorm to `I=-22, TP=-2, LRA=11` is acceptable.
+
+`Forest Light.wav` around `-23.72 LUFS / -7.84 dBTP / LRA 18.00` is medium risk: already near target but with high LRA. Dynamic loudnorm can lift quiet intros and make low-level noise/electric hiss obvious. Stop after measuring and propose linear gain instead.
+
+Rain, bird, ambience, or other effect stems are high risk. Measure them if requested, but do not normalize them to finished-track loudness unless the user explicitly confirms the goal.
 
 ## Recommended Commands
 
@@ -65,14 +74,14 @@ ffmpeg -hide_banner -y -i "input.wav" -af loudnorm=I=-20:TP=-2:LRA=11:print_form
 
 ## Completion Output
 
-Always provide the user a concise table-ready block after completing measurement or rendering. Include these fields when available:
+Always provide the user a concise code-block after completing measurement or rendering. Do not use a Markdown table for this project. Include these exact fields when available:
 
 ```text
 实测文件：
 响度优化目标：
-综合响度 Integrated LUFS：
-True Peak dBTP：
-LRA 动态范围：
+综合响度：
+True Peak：
+LRA：
 响度门限：
 采样率：
 声道：
