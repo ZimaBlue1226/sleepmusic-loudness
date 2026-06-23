@@ -109,6 +109,13 @@ Spring Before Sunrise-202606031722.wav
 Valley in Silver-202606031720.wav
 ```
 
+When the source file lives in a generic staging folder such as `待处理音频/`, do not use the folder name as the music title. Derive the title from the source filename by stripping a trailing date or timestamp such as `-20260618` or `-202606181824`, then append the new `YYYYMMDDHHMM` timestamp:
+
+```text
+待处理音频/Spring Before Sunrise-20260618.wav
+-> 待处理音频/Spring Before Sunrise-YYYYMMDDHHMM.wav
+```
+
 Do not generate names like:
 
 ```text
@@ -130,6 +137,10 @@ Render with I=-22, TP=-2, LRA=11 as Valley in Silver-202606031720.wav: about -23
 Spring Before Sunrise-202606031446.wav
 Input:  -38.16 LUFS / -17.32 dBTP / LRA 19.70
 Render with I=-22, TP=-2, LRA=11, -ar 44100 as Spring Before Sunrise-202606031722.wav: about -23.07 LUFS / -2.00 dBTP / LRA 15.70
+
+Spring Before Sunrise-20260618.wav in 待处理音频/
+Input:  -38.13 LUFS / -17.32 dBTP / LRA 19.70
+Render with I=-22, TP=-2, LRA=11, -ar 44100 as Spring Before Sunrise-202606181824.wav: about -23.06 LUFS / -2.00 dBTP / LRA 15.00
 ```
 
 Use `I=-20, TP=-2, LRA=11` as an initial audition baseline when there is no feedback. If it feels too present, use the more conservative `I=-22, TP=-2, LRA=11` baseline.

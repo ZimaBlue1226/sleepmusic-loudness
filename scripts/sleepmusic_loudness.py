@@ -67,7 +67,11 @@ def measure(path: Path, i: float, tp: float, lra: float):
 
 
 def output_name(path: Path, timestamp: str | None = None):
-    title = path.parent.name if path.parent.name else strip_timestamp(path.stem)
+    generic_dirs = {"待处理音频", "pending-audio", "pending_audio", "output", "outputs", "tmp", "temp"}
+    if path.parent.name and path.parent.name not in generic_dirs:
+        title = path.parent.name
+    else:
+        title = strip_timestamp(path.stem)
     stamp = timestamp or datetime.now().strftime("%Y%m%d%H%M")
     return path.with_name(f"{title}-{stamp}.wav")
 
@@ -78,7 +82,7 @@ def format_num(value: float):
 
 
 def strip_timestamp(stem: str):
-    return re.sub(r"-\d{12}$", "", stem)
+    return re.sub(r"-\d{8}(\d{4})?$", "", stem)
 
 
 def format_duration(seconds: float):
